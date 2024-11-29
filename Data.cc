@@ -4,6 +4,7 @@
 #include <fstream>
 #include <cassert>
 #include <stdexcept>
+#include <cmath>
 
 using namespace std;
 
