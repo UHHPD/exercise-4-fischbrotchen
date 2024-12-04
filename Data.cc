@@ -81,11 +81,13 @@ Data Data::operator+(const Data& other) const {
     std::vector<double> average_y;
     std::vector<double> uncert_aver_y;
     for (int i = 0; i < size(); ++i) {
+        double w_1 = 1/pow(error(i),2);
+        double w_2 = 1/pow(other.error(i),2);
         average_y.push_back(
-            ((1/pow(error(i),2))*measurement(i)+(1/pow(other.error(i),2))*other.measurement(i))/((1/pow(error(i),2)) + (1/pow(other.error(i),2)))
-            );
+            (w_1*measurement(i)+w_2*other.measurement(i))/(w_1 + w_2)
+        );
         uncert_aver_y.push_back(
-            sqrt(1/(1/pow(error(i),2)+1/pow(other.error(i),2)))
+            sqrt(1/(w_1 + w_2))
         );
     }
     data_sum.setData(average_y);
