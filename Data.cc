@@ -116,3 +116,4 @@ double Data::chi_sq_ndof() {
     double chi_sq_over_ndof = chi_sq/ndof;
     return chi_sq_over_ndof;
 }
+

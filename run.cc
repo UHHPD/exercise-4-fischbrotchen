@@ -93,10 +93,19 @@ int main() {
 
     // create an object which holds the data of all four experiments
     vector<Data> data_vector;
+    char A;
+    char B;
+    char C;
+    char D;
+    vector<string> exp_names;
     data_vector.push_back(datA);
+    exp_names.push_back("A");
     data_vector.push_back(datB);
+    exp_names.push_back("B");
     data_vector.push_back(datC);
+    exp_names.push_back("C");
     data_vector.push_back(datD);
+    exp_names.push_back("D");
 
   cout << "Measurement in bin 27 for experiment A, B, C, D:" << endl;
   for (int i = 0; i < data_vector.size(); i++) {
@@ -128,22 +137,28 @@ int main() {
     // } 
 
     cout << "\n\n2a)" << endl;
-    int num_deviations_AB = data_vector[0].checkCompatibility(data_vector[1],2);
-    int num_deviations_BC = data_vector[1].checkCompatibility(data_vector[2],2);
-    int num_deviations_CD = data_vector[2].checkCompatibility(data_vector[3],2);
-    int num_deviations_DA = data_vector[3].checkCompatibility(data_vector[1],2);
-    cout << "Number of deviations for exp A and exp B for n = 2: " << num_deviations_AB << endl;
-    cout << "Number of deviations for exp B and exp C for n = 2: " << num_deviations_BC << endl;
-    cout << "Number of deviations for exp C and exp D for n = 2: " << num_deviations_CD << endl;
-    cout << "Number of deviations for exp D and exp A for n = 2: " << num_deviations_DA << endl;
-    // TBC...
+    int num_deviations = 0;
+    for (int std_devs = 2; std_devs <= 3; std_devs += 1){
+        for (int i = 0; i < data_vector.size(); i++){
+            for (int j = 0; j < data_vector.size(); j++) {
+                if (i == j) {
+                    continue;
+                }
+                else {
+                    num_deviations = data_vector[i].checkCompatibility(data_vector[j],2);
+                    cout << "Number of deviations for exp "<< exp_names[i] << " and " << exp_names[j] << " for n = "<< std_devs << ": " << num_deviations << endl;
+                }
+            }
+        }
+    }
+    
 
     cout << "\n2b)" << endl;
     cout << "For exp A, Chi^2/n_dof = " << data_vector[0].chi_sq_ndof() << endl;
     cout << "For exp B, Chi^2/n_dof = " << data_vector[1].chi_sq_ndof() << endl;
     cout << "For exp C, Chi^2/n_dof = " << data_vector[2].chi_sq_ndof() << endl;
     cout << "For exp D, Chi^2/n_dof = " << data_vector[3].chi_sq_ndof() << endl;
-    cout << "Seems the data are not compatible\n";
+    cout << "For n = 2, we would expect about " << 0.05 * data_vector[0].size() << " deviations, for n = 3, we would expect about " << 0.003 * data_vector[0].size() << " deviations." << endl;
 
 
     cout << "\n2c)" << endl;
