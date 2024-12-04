@@ -61,6 +61,18 @@ void runTests() {
     std::cout << (test() ? " ok" : " FAILED!") << std::endl;
 }
 
+Data average_datasets(Data data1, Data data2) {
+    Data averaged_data = data1;
+    
+    for (int i = 0; i < data1.size(); i++) {
+
+    }
+
+
+    return averaged_data;
+}
+
+
 int main() {
   using namespace std;
 
@@ -103,13 +115,44 @@ int main() {
     double uncertainty_delta_y_27 = sqrt(pow(-1 * uncert_b_27,2) + pow(1 * uncert_a_27,2));
     cout << "The uncertainty on that is " << uncertainty_delta_y_27 << ", so the measurements agree with each other within 1 sigma" << endl;
 
-    int num_deviations_AB = data_vector[0].checkCompatibility(data_vector[1],1);
-    int num_deviations_BC = data_vector[1].checkCompatibility(data_vector[2],1);
-    int num_deviations_CD = data_vector[2].checkCompatibility(data_vector[3],1);
-    int num_deviations_DA = data_vector[3].checkCompatibility(data_vector[1],1);
-    cout << "Number of deviations for exp A and exp B for n = 1: " << num_deviations_AB << endl;
-    cout << "Number of deviations for exp B and exp C for n = 1: " << num_deviations_BC << endl;
-    cout << "Number of deviations for exp C and exp D for n = 1: " << num_deviations_CD << endl;
-    cout << "Number of deviations for exp D and exp A for n = 1: " << num_deviations_DA << endl;
+
+
+    cout << "\n1e)" << endl;
+    Data data_A_plus_B = data_vector[0] + data_vector[1];
+    cout << data_A_plus_B.measurement(1) << endl;
+    cout << data_vector[0].measurement(1) << endl;
+    // testing the sum method
+    // for (int i = 0; i < data_vector[0].size(); ++i) {
+    //     cout << ((1/pow(data_vector[0].error(i),2))*data_vector[0].measurement(i)+(1/pow(data_vector[1].error(i),2))*data_vector[1].measurement(i))/((1/pow(data_vector[0].error(i),2)) + (1/pow(data_vector[1].error(i),2))) << endl;
+    //     cout << data_A_plus_B.measurement(i) << endl;
+    // } 
+
+    cout << "\n\n2a)" << endl;
+    int num_deviations_AB = data_vector[0].checkCompatibility(data_vector[1],2);
+    int num_deviations_BC = data_vector[1].checkCompatibility(data_vector[2],2);
+    int num_deviations_CD = data_vector[2].checkCompatibility(data_vector[3],2);
+    int num_deviations_DA = data_vector[3].checkCompatibility(data_vector[1],2);
+    cout << "Number of deviations for exp A and exp B for n = 2: " << num_deviations_AB << endl;
+    cout << "Number of deviations for exp B and exp C for n = 2: " << num_deviations_BC << endl;
+    cout << "Number of deviations for exp C and exp D for n = 2: " << num_deviations_CD << endl;
+    cout << "Number of deviations for exp D and exp A for n = 2: " << num_deviations_DA << endl;
+    // TBC...
+
+    cout << "\n2b)" << endl;
+    cout << "For exp A, Chi^2/n_dof = " << data_vector[0].chi_sq_ndof() << endl;
+    cout << "For exp B, Chi^2/n_dof = " << data_vector[1].chi_sq_ndof() << endl;
+    cout << "For exp C, Chi^2/n_dof = " << data_vector[2].chi_sq_ndof() << endl;
+    cout << "For exp D, Chi^2/n_dof = " << data_vector[3].chi_sq_ndof() << endl;
+    cout << "Seems the data are not compatible\n";
+
+
+    cout << "\n2c)" << endl;
+    Data all_data_summed = data_vector[0] + data_vector[1]+ data_vector[2]+ data_vector[3];
+    cout << "The value of chi^2/n_dof for all datasets combined is: " << all_data_summed.chi_sq_ndof() << endl;
+
+
+
+
+
   return 0;
 }

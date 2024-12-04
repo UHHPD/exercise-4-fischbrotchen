@@ -8,6 +8,11 @@
 
 using namespace std;
 
+double background_prediction(double x, double alpha, double beta, double gamma, double delta) {
+    double f = alpha + beta * x + gamma * exp(-delta*x);
+    return f;
+}
+
 Data::Data(const std::string& filename) {
   ifstream file(filename);
 
@@ -56,9 +61,9 @@ int Data::checkCompatibility(const Data& in, int n) {
 
     for (int i = 0; i < data_to_compare_to.size(); i++){
         // cout << i << endl;
-        delta_y = abs(m_data[i] - data_to_compare_to.m_data[i]);
+        delta_y = abs(measurement(i) - data_to_compare_to.measurement(i));
         // cout << delta_y << endl;
-        sigma_delta_y = sqrt(pow(m_uncertainties[i],2)+pow(data_to_compare_to.m_uncertainties[i],2));
+        sigma_delta_y = sqrt(pow(error(i),2)+pow(data_to_compare_to.error(i),2));
         // cout << sigma_delta_y << endl;
         if (delta_y > n * sigma_delta_y) {
             number_of_deviations += 1;
@@ -66,4 +71,46 @@ int Data::checkCompatibility(const Data& in, int n) {
         }
     }
     return number_of_deviations;
+}
+
+Data Data::operator+(const Data& other) const {
+
+    Data data_sum("exp_A");
+
+    // measurements
+    std::vector<double> average_y;
+    std::vector<double> uncert_aver_y;
+    for (int i = 0; i < size(); ++i) {
+        average_y.push_back(
+            ((1/pow(error(i),2))*measurement(i)+(1/pow(other.error(i),2))*other.measurement(i))/((1/pow(error(i),2)) + (1/pow(other.error(i),2)))
+            );
+        uncert_aver_y.push_back(
+            sqrt(1/(1/pow(error(i),2)+1/pow(other.error(i),2)))
+        );
+    }
+    data_sum.setData(average_y);
+    data_sum.setUncertainties(uncert_aver_y);
+
+    // uncertainties
+    // std::vector<double> uncertainty_on_y;
+    // for (size_t i = 0; i < m_uncertainties.size(); ++i) {
+    //     uncertainty_on_y.push_back(sqrt(1/(measurement(i)+other.measurement(i))));
+    // }
+    // data_sum.setUncertainties(uncertainty_on_y); // Set summed uncertainties
+
+    return data_sum;
+}
+
+double Data::chi_sq_ndof() {
+    double alpha = 0.005;
+    double beta = -0.00001;
+    double gamma = 0.08;
+    double delta = 0.015;
+    double ndof = 56;
+    double chi_sq = 0;
+    for (int i = 0; i < size(); i++) {
+        chi_sq += pow(measurement(i) - background_prediction(binCenter(i), alpha, beta, gamma, delta),2)/pow(error(i),2);
+    }
+    double chi_sq_over_ndof = chi_sq/ndof;
+    return chi_sq_over_ndof;
 }

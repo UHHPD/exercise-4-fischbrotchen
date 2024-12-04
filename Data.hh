@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 class Data {
  public:
@@ -14,7 +15,12 @@ class Data {
   double binLow(int i) const { return m_bins[i]; }
   double binHigh(int i) const { return m_bins[i+1]; }
   double error(int i) const { return m_uncertainties[i]; }
+  void setData(const std::vector<double>& data) { m_data = data; }
+  void setBins(const std::vector<double>& bins) { m_bins = bins; }
+  void setUncertainties(const std::vector<double>& uncertainties) { m_uncertainties = uncertainties; }
   int checkCompatibility(const Data& in, int n);
+  Data operator+(const Data& other) const;
+  double chi_sq_ndof();
  private:
   Data() {}  // disallow empty data set
   void assertSizes();
